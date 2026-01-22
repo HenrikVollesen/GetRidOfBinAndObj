@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,9 +14,6 @@ namespace getRidOfBinAndObj
             System.IO.FileInfo[]? files = null;
             System.IO.DirectoryInfo[]? subDirs = null;
 
-            Info.theInfoLabel.Text = root.Name;
-
-            //Thread.Sleep(3000);
             // First, process all the files directly under this folder
             try
             {
@@ -27,7 +25,6 @@ namespace getRidOfBinAndObj
             {
                 Console.WriteLine(e.Message);
             }
-
             catch (System.IO.DirectoryNotFoundException e)
             {
                 Console.WriteLine(e.Message);
@@ -41,9 +38,19 @@ namespace getRidOfBinAndObj
 
                 foreach (System.IO.DirectoryInfo dirInfo in subDirs)
                 {
-                    if ((dirInfo.Name.Equals("bin")) || (dirInfo.Name.Equals("obj")))
+                    Info.SetInfo("Processing " + dirInfo.Name);
+                    string lc = dirInfo.Name.ToLower();
+                    if (lc.Equals("bin") || lc.Equals("obj") || lc.Equals("x64"))
                     {
-                        dirInfo.Delete(true);
+                        try
+                        {
+                            dirInfo.Delete(true);
+                        }
+                        catch (System.IO.IOException e)
+                        {
+                            Info.SetInfo("Problem with " + dirInfo.Name);
+                            Thread.Sleep(2000);
+                        }
                     }
                     else
                     {
